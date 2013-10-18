@@ -1,0 +1,19 @@
+*.DS_Store*
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*/target
+*/bin
+*/.settings
+/nbproject/private/
+
+##Secret files
+
+*Credentials*php
+*credentials*php
+
+build/*
+!build/build.sh
