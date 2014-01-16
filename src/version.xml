@@ -3,8 +3,8 @@
 
 
 <version>
-        <application>mods</application>
-        <type>plugins.oaiMetadataFormats</type>
-        <release>0.42</release>
-        <date>2013-10-16</date>
+    <application>mods2</application>
+    <type>plugins.OAIMetadataFormat</type>
+    <release>0.1</release>
+    <date>2014-01-16</date>
 </version>

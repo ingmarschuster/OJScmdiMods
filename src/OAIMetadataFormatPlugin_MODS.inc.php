@@ -23,7 +23,7 @@ class OAIMetadataFormatPlugin_MODS extends OAIMetadataFormatPlugin
 	}
 
 	function getSchema(){
-	return 'http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1360931019822/xsd';
+	return 'http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1375880372976/xsd';
 	}
 
 	function getNamespace(){

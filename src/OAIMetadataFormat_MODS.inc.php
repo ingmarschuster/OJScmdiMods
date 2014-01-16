@@ -48,24 +48,25 @@ class OAIMetadataFormat_MODS extends OAIMetadataFormat {
 		       //PackageType
                        $packageType = $this->getPackageType($articleId);
 
-            $response = "<?xml version=\"1.0\" enconding=\"UTF-8\"?>" .
-	    "<CMD CMDVersion=\"1.1\" xmlns=\"http://www.clarin.eu/cmd/\" \n" . 
-            "\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.clarin.eu/cmd/  http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1360931019822/xsd\">" . 
+            //$response = 
+	    /*"<?xml version=\"1.0\" enconding=\"UTF-8\"?>" .*/
+	   $reponse = "<CMD CMDVersion=\"1.1\" xmlns=\"http://www.clarin.eu/cmd/\" \n" . 
+            "\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.clarin.eu/cmd/  http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1375880372976/xsd\">" . 
             "\t<Header>\n" . 
 	    "\t\t<MdCreator>Mind Research repository CMDI Creator 1.0</MdCreator>\n" .   
 	    "\t\t\t<MdCreationDate>" . date('Y-m-d', $dateLastModified) . "</MdCreationDate>\n";     
 
 	      //if there is a PID, return PID. Otherwise return: NOT ISSUED.
 	      if ($pid == NULL){
-               $response .= "\t\t\t<MdSelfLink>NOT_ISSUED</MdSelfLink>\n";					 
+               $respone .= "\t\t\t<MdSelfLink>NOT_ISSUED</MdSelfLink>\n";					 
 	      }
 	      else{
 	       "\t\t\t<MdSelfLink>" . $pid . "</MdSelfLink>\n"; 
 	      }
                             
              $response .=    
-	    "\t\t\t<MdProfile>clarin.eu:cr1:p_1360931019822<!-- Profile-ID aus der COmponent registry (gibt es sobald Profil in der Registry veröffentlicht wurde) //--></MdProfile>\n" . 
-	    "\t\t\t<MdCollectionDisplayName>$publishers</MdCollectionDisplayName>\n" . 
+	    "\t\t\t<MdProfile>clarin.eu:cr1:p_1375880372976</MdProfile>\n" . 
+	    "\t\t\t<MdCollectionDisplayName>$publisher</MdCollectionDisplayName>\n" . 
 	    "\t</Header>\n" . 
 	    "\t<Resources>\n" . 
 	    "\t\t<ResourceProxyList>\n" . 
