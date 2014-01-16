@@ -30,62 +30,76 @@ class OAIMetadataFormat_MODS extends OAIMetadataFormat {
 	    		   $dateLastModified = $article->getLastModified();
     			   $dateLastModified = strtotime($dateLastModified);
 
-						   
-			    // Publisher
-		            $publishers = $this->stripAssocArray((array) $journal->getTitle(null));
-                            
+
                             // PaperPackage Name for direct Link to the Package
 			    $daos    =& DAORegistry::getDAOs();
 			    $rpositoryDao  =& $daos['RpositoryDAO'];
-		            $filenamePP = htmlspecialchars(Core::cleanVar(strip_tags($rpositoryDao->getPackageName($articleId))));
+		            $packageName = htmlspecialchars(Core::cleanVar(strip_tags($rpositoryDao->getPackageName($articleId))));
 		       
 		       //PID 
 		        $pid = $rpositoryDao->getPID($articleId);
-		       
-		       // woher der filename kommt muss nochmal überprüft werden. In RpositoryDAO war es nicht zu finden.
-		       $filename = '';
-                       
+		      //Name of the Package without tar.gz-Ending 
+                       $filename = ereg_replace('(_)[0-9].[0-9](.tar.gz)','',$packageName);
+
 		       //PackageType
                        $packageType = $this->getPackageType($articleId);
+			
+			//check if $pid is set
+			if($pid==NULL) {
+			$pidOutPut = 'NOT_ISSUED';
+			}
+			else{
+			$pidOutPut = $pid;
+			}
 
-            //$response = 
-	    /*"<?xml version=\"1.0\" enconding=\"UTF-8\"?>" .*/
-	   $reponse = "<CMD CMDVersion=\"1.1\" xmlns=\"http://www.clarin.eu/cmd/\" \n" . 
-            "\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.clarin.eu/cmd/  http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1375880372976/xsd\">" . 
-            "\t<Header>\n" . 
-	    "\t\t<MdCreator>Mind Research repository CMDI Creator 1.0</MdCreator>\n" .   
-	    "\t\t\t<MdCreationDate>" . date('Y-m-d', $dateLastModified) . "</MdCreationDate>\n";     
 
-	      //if there is a PID, return PID. Otherwise return: NOT ISSUED.
-	      if ($pid == NULL){
-               $respone .= "\t\t\t<MdSelfLink>NOT_ISSUED</MdSelfLink>\n";					 
-	      }
-	      else{
-	       "\t\t\t<MdSelfLink>" . $pid . "</MdSelfLink>\n"; 
-	      }
-                            
-             $response .=    
+/*            $response = "<?xml version=\"1.0\" enconding=\"UTF-8\"?>" . */
+  //    	   $response = "<CMD_ComponentSpec isProfile=\"true\" xsi:schemaLocation=\"http://www.clarin.eu/cmd https://infra.clarin.eu/cmd/general-component-schema.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" .
+	  $response= "<CMD CMDVersion=\"1.1\" xmlns=\"http://www.clarin.eu/cmd/\" \n" . 
+            "\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.clarin.eu/cmd/  http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1375880372976/xsd\">\n" . 
+            //"<CMD_ComponentSpec isProfile=\"true\">\n" . 
+	    //"\t<Header>\n" .
+	    //"\t\t<ID>clarin.eu:cr1:p_1375880372976</ID>\n" . 
+	   // "\t\t<Name>singlePaperPackage</Name>\n" .
+	    //"\t\t<Description>Profile for single PaperPackage</Description>\n" . 
+	   // "\t</Header>\n" . 
+	    //"\t<CMD_Component CardinalityMax=\"1\" CardinalityMin=\"1\" name=\"singlePaperPackage\">\n" . 
+	    //"\t\t<CMD_Component CardinalityMax=\"1\" CardinalityMin=\"1\" name=\"paperPackage\"/>\n" . 
+	    //"\t</CMD_Component>\n" . 
+	    //"</CMD_ComponentSpec>\n" . 
+
+	    "\t<Header>\n" . 
+	    "\t\t<MdCreator>Mind Research Repository CMDI Creator 1.0</MdCreator>\n" .   
+	    "\t\t\t<MdCreationDate>" . date('Y-m-d', $dateLastModified) . "</MdCreationDate>\n" .  
+            "\t\t\t<MdSelfLink>" . $pidOutPut . "</MdSelfLink>\n" . 
 	    "\t\t\t<MdProfile>clarin.eu:cr1:p_1375880372976</MdProfile>\n" . 
-	    "\t\t\t<MdCollectionDisplayName>$publisher</MdCollectionDisplayName>\n" . 
+	    "\t\t\t<MdCollectionDisplayName>Mind Research Repository</MdCollectionDisplayName>\n" . 
 	    "\t</Header>\n" . 
 	    "\t<Resources>\n" . 
 	    "\t\t<ResourceProxyList>\n" . 
 	    "\t\t\t<ResourceProxy id=\"mrr-" . $pid . "-resource\">\n" . 
 	    "\t\t\t\t<ResourceType mimetype=\"application/x-gzip\">Resource</ResourceType>\n" . 
-	    "\t\t\t\t<ResourceRef>" . htmlspecialchars(Core::cleanVar(PKPRequest::getBaseUrl() . "/Rpository/src/contrib/$filenamePP")) . "</ResourceRef>\n" . 
+	    "\t\t\t\t<ResourceRef>" . htmlspecialchars(Core::cleanVar(PKPRequest::getBaseUrl() . "/Rpository/src/contrib/$packageName")) . "</ResourceRef>\n" .  
 	    "\t\t\t</ResourceProxy>\n" . 
 	    "\t\t</ResourceProxyList>\n" . 
 	    "\t\t<JournalFileProxyList/>\n" . 
 	    "\t\t<ResourceRelationList/>\n" . 
 	    "\t</Resources>\n" . 
-	    "\t<Components>\n" . 
+	    //"\t<Components>\n" . 
+            "\t<CMD_ComponentSpec isProfile=\"true\">\n" .
+            "\t\t<Header>\n" .
+            "\t\t\t<ID>clarin.eu:cr1:p_1375880372976</ID>\n" .
+            "\t\t\t<Name>singlePaperPackage</Name>\n" .
+            "\t\t\t<Description>Profile for single PaperPackage</Description>\n" .
+            "\t\t</Header>\n" .
+            "\t\t<CMD_Component CardinalityMax=\"1\" CardinalityMin=\"1\" name=\"singlePaperPackage\">\n" .
+            "\t\t\t<CMD_Component CardinalityMax=\"1\" CardinalityMin=\"1\" name=\"paperPackage\"/>\n" .
+            //"\t\t</CMD_Component>\n" .
+            //"\t</CMD_ComponentSpec>\n" .
 	    "\t\t<paperPackage>\n" . 
             "\t\t\t<type>$packageType</type>\n" . 
-	    "\t\t</paperPackage>\n" . 
-	    "\t</Components>\n" . 
-	    "</CMD>\n" . 
-	    "<modsCollection xmlns=\"http//www.loc.gov/mods/v3\">\n" . 
-            "<mods ID=\"$filename\">" .
+            
+	    "<mods ID=\"$filename\">\n" .
 	    "\t<titleInfo>\n" . 
 	    "\t\t<title>" . htmlspecialchars(Core::cleanVar(strip_tags($article->getArticleTitle()))) . "</title>\n" . 
  	    "\t</titleInfo>\n";
@@ -98,7 +112,8 @@ class OAIMetadataFormat_MODS extends OAIMetadataFormat {
 		        "\t\t<namePart type=\"family\">" . htmlspecialchars(Core::cleanVar($author->getLastName())) . "</namePart>\n" .  
 			"\t\t<role>\n" . 
 			"\t\t\t<roleTerm authority=\"marcrelator\" type=\"text\">author</roleTerm>\n" . 
-			"\t\t</role>\n" ;   
+			"\t\t</role>\n" .    
+			"\t</name>\n";
 			}
 
        //date published
@@ -107,22 +122,28 @@ class OAIMetadataFormat_MODS extends OAIMetadataFormat {
 	"\t\t<dateIssued>" . strftime('%Y', $datePublished) . "</dateIssued>\n" .
         "\t</originInfo>\n" .
 
-	"\t<typeOfRessource>text</typeOfResource>\n" . 
+	"\t<typeOfResource>text</typeOfResource>\n" . 
 	"\t<genre>journal article</genre>\n";
 			
-	 // Include abstract(s)
+	 // Include abstract
          $abstract = htmlspecialchars(Core::cleanVar(strip_tags($article->getArticleAbstract())));
          if (!empty($abstract)) {
          $response .= "\t<abstract>$abstract</abstract>\n";
          }
-								
+    
 	$response .=
-	"\t<identifier type=\"hdl\">$filename</identifier>\n" . 
+	"\t<identifier type=\"hdl\">$pidOutPut</identifier>\n" . 
 	"\t<location>\n" . 
-	"\t\t<url displayLabel=\"Electronic full text\" access=\"raw object\">" . htmlspecialchars(Core::cleanVar(Request::url($journal->getPath(), 'article', 'view', $article->getBestArticleId()))) . "\" />\n";
-	    
+	"\t\t<url displayLabel=\"Electronic full text\" access=\"raw object\">" .  htmlspecialchars(Core::cleanVar(PKPRequest::getBaseUrl() . "/Rpository/src/contrib/$packageName")) . "\" />\n" . 
+	 "\t\t</url>\n" . 
+	 "\t</location>\n"; 
 																															    
-          $response .= "</mods>";
+	    $response .= "</mods>\n" . 
+	                 "\t\t</paperPackage>\n" . 
+	                 "\t\t</CMD_Component>\n" .
+	                 "\t</CMD_ComponentSpec>\n" .
+	      //           "\t</Components>\n" . 
+		         "</CMD>\n" ;
 
 	return $response;
    }                                                                                                                                                              
@@ -134,7 +155,7 @@ class OAIMetadataFormat_MODS extends OAIMetadataFormat {
       if(!$filename == NULL){
         return 'legacy_r_package';
       }
-      return 'no package uploaded';
+      return 'NO_PACKAGE_UPLOADED';
 
     }
 
